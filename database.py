@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 def init_db():
     conn = sqlite3.connect('clock_times.db')
@@ -8,6 +9,26 @@ def init_db():
                  date TEXT,
                  clock_in TEXT,
                  clock_out TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS timestamps (
+                 id INTEGER PRIMARY KEY,
+                 last_message TEXT)''')
+    conn.commit()
+    conn.close()
+
+def get_last_message_timestamp():
+    conn = sqlite3.connect('clock_times.db')
+    c = conn.cursor()
+    c.execute('SELECT last_message FROM timestamps WHERE id = 1')
+    result = c.fetchone()
+    conn.close()
+    if result:
+        return datetime.datetime.fromisoformat(result[0])
+    return None
+
+def set_last_message_timestamp(timestamp):
+    conn = sqlite3.connect('clock_times.db')
+    c = conn.cursor()
+    c.execute('INSERT OR REPLACE INTO timestamps (id, last_message) VALUES (1, ?)', (timestamp.isoformat(),))
     conn.commit()
     conn.close()
 

@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 from discord.ext.commands import CommandOnCooldown
-from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session
+from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session, get_last_message_timestamp, set_last_message_timestamp
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,17 +16,47 @@ ALLOWED_ADMIN_CHANNEL_ID = int(os.getenv('ALLOWED_ADMIN_CHANNEL_ID'))
 REQUIRED_PD_ROLE_NAME = os.getenv('REQUIRED_PD_ROLE_NAME')
 REQUIRED_HR_ROLE_NAME = os.getenv('REQUIRED_HR_ROLE_NAME')
 REQUIRED_PD_SPECIFIC_ROLE_NAME = os.getenv('REQUIRED_PD_SPECIFIC_ROLE_NAME').split(',')
+LOGS_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID'))
+LOGS_TAG_ROLE_NAME = os.getenv('LOGS_TAG_ROLE_NAME')
+RENEW_CHANNEL_ID = int(os.getenv('RENEW_CHANNEL_ID'))
 
 # Initialize database
 init_db()
 
 logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+class DiscordHandler(logging.Handler):
+    def __init__(self, bot, channel_id):
+        super().__init__()
+        self.bot = bot
+        self.channel_id = channel_id
+
+    async def send_log(self, message):
+        channel = self.bot.get_channel(self.channel_id)
+        if channel:
+            await channel.send(message)
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.bot.loop.create_task(self.send_log(log_entry))
+
 # Define bot and command prefix
 intents = discord.Intents.default()
 intents.members = True  # Enable member intents
 intents.message_content = True  # Enable message content intent
 bot = commands.Bot(command_prefix="/", intents=intents)
+
+# Add the custom handler to the logger
+discord_handler = DiscordHandler(bot, LOGS_CHANNEL_ID)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+discord_handler.setFormatter(formatter)
+
+# Set a specific log level for the Discord handler
+discord_handler.setLevel(logging.WARNING)  # Only send WARNING and above to Discord
+
+# Add handlers to the logger
+logger = logging.getLogger()
+logger.addHandler(discord_handler)
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -39,6 +69,33 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+    schedule_next_message()
+
+def schedule_next_message():
+    """Schedule the next message based on the last message timestamp."""
+    last_timestamp = get_last_message_timestamp()
+    if last_timestamp:
+        now = datetime.datetime.now()
+        next_timestamp = last_timestamp + datetime.timedelta(days=7)
+        delay = (next_timestamp - now).total_seconds()
+        if delay > 0:
+            bot.loop.call_later(delay, send_scheduled_message)
+        else:
+            send_scheduled_message()
+    else:
+        send_scheduled_message()
+
+def send_scheduled_message():
+    """Send the scheduled message and update the timestamp."""
+    channel = bot.get_channel(RENEW_CHANNEL_ID)
+    if channel:
+        role = discord.utils.get(channel.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+        if role:
+            bot.loop.create_task(channel.send(f"{role.mention} Please RENEW the BOT"))
+        else:
+            bot.loop.create_task(channel.send("Please RENEW the BOT"))
+        set_last_message_timestamp(datetime.datetime.now())
+        schedule_next_message()
 
 def round_minutes(minutes):
     """Round minutes according to the specified rules"""
@@ -94,11 +151,16 @@ async def clockin(ctx):
         if session[1] is None:
             await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
             await ctx.send(f"{ctx.author.mention}, you already have an active clock-in. Please clock out first.", delete_after=3)
+            role = discord.utils.get(ctx.guild.roles, name=LOGS_TAG_ROLE_NAME)
+            hr = discord.utils.get(ctx.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+            logging.warning(f"{role.mention} {hr.mention}")
+            logging.warning(f"User {ctx.author.mention} tried to clock in with an active session.")
             return
 
     add_clock_in(user_id, date_str, current_time.strftime("%H:%M:%S"))
     await ctx.send(f"```--------------------------------------------------------```")
     await ctx.send(f"{ctx.author.mention} clocked in at {current_time.strftime('%H:%M:%S')} on {date_str}")
+    logging.info(f"User {ctx.author} clocked in at {current_time.strftime('%H:%M:%S')} on {date_str}.")
 
 @bot.command()
 @cooldown(1,1.5,BucketType.default)
@@ -131,13 +193,14 @@ async def clockout(ctx):
             rounded_minutes = round_minutes(minutes)
             await ctx.send(f"```--------------------------------------------------------```")
             await ctx.send(f"{ctx.author.mention} clocked out at {current_time.strftime('%H:%M:%S')} on {date_str}. Total time: {rounded_minutes:.2f} minutes")
+            logging.info(f"User {ctx.author} clocked out at {current_time.strftime('%H:%M:%S')} on {date_str}. Total time: {rounded_minutes:.2f} minutes.")
             return
 
     await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
     await ctx.send(f"{ctx.author.mention}, you need to clock in first using `/clockin`.", delete_after=3)
 
 @bot.command()
-async def worked(ctx, user: discord.Member = None, date: str = None):
+async def worked(ctx, date: str = None, user: discord.Member = None):
     """Show total worked time for all users or a specific user on a specific date (default: today)"""
     await ctx.message.delete()
     if not is_allowed_admin_channel(ctx):
@@ -169,7 +232,8 @@ async def worked(ctx, user: discord.Member = None, date: str = None):
                 minutes = (clock_out_time - clock_in_time).total_seconds() / 60
                 rounded_minutes = round_minutes(minutes)
                 total_minutes += rounded_minutes
-                details.append(f"{idx}. {session[0]} - {session[1]} ({rounded_minutes:.2f} min)")
+                if(rounded_minutes > 0):
+                    details.append(f"{idx}. {session[0]} - {session[1]} ({rounded_minutes:.2f} min)")
 
         if total_minutes > 0:
             details_text = "\n".join(details)
@@ -198,9 +262,11 @@ async def worked(ctx, user: discord.Member = None, date: str = None):
         report_text = "\n\n".join(report)
         await ctx.send(f"```--------------------------------------------------------```")
         await ctx.send(f"**Worked time report for {date}:**\n\n{report_text}")
+        logging.info(f"User {ctx.author} requested worked time report for {date}.")
     else:
         await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
         await ctx.send(f"No records found for {date}.", delete_after=3)
+        logging.info(f"User {ctx.author} requested worked time report for {date}, but no records were found.")
 
 @bot.command()
 @cooldown(1,1.5,BucketType.default)
@@ -228,8 +294,10 @@ async def rmv(ctx, user: discord.Member, date: str, index: int):
     clock_in_time = session_to_remove[0]
 
     remove_session(user_id, date, clock_in_time)
-    await ctx.send(f"{ctx.author.mention}, removed session for {user.mention} on {date} at index {index}.")
-    logging.info(f"Command: /rmv, User: {ctx.author}, Target: {user}, Date: {date}, Index: {index}, Session: {session_to_remove}")
+    await ctx.send(f"{ctx.author.mention}, removed session for {user.mention} on {date} at index {index}. Session: {session_to_remove}")
+    await user.send(f"Your session {session_to_remove} on {date} was removed by {ctx.author.mention}.")
+    logging.warning(f"Command: /rmv, User: {ctx.author.mention}, Target: {user.mention}, Date: {date}, Index: {index}, Session: {session_to_remove}")
+    logging.info(f"User {ctx.author.mention} removed session for {user.mention} on {date} at index {index}. Session: {session_to_remove}")
 
 
 @bot.command()
@@ -262,6 +330,7 @@ async def ongoing(ctx, user: discord.Member = None, action: str = None):
                         await ctx.send(f"{ctx.author.mention}, stopped and removed clock-in for {user.mention} at {session[0]}.")
                         await user.send(f"Your clock-in on {session[0]} was stopped by {ctx.author.mention}.")
                         logging.info(f"Command: /ongoing stop, User: {ctx.author}, Target: {user}, Session started at: {session[0]}")
+                        logging.warning(f"User {ctx.author.mention} stopped and removed clock-in for {user.mention} at {session[0]}.")
                         return
                     else:
                         await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
