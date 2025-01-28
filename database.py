@@ -73,3 +73,31 @@ def remove_session(user_id, date, clock_in):
     c.execute("DELETE FROM clock_times WHERE user_id = ? AND date = ? AND clock_in = ?", (user_id, date, clock_in))
     conn.commit()
     conn.close()
+
+def get_punish_count(user_id):
+    conn = sqlite3.connect('punishments.db')
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS punishments (user_id INTEGER PRIMARY KEY, count INTEGER)")
+    cursor.execute("SELECT count FROM punishments WHERE user_id = ?", (user_id,))
+    result = cursor.fetchone()
+    conn.close()
+    return result[0] if result else 0
+
+def reset_punish_count(user_id):
+    conn = sqlite3.connect('punishments.db')
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS punishments (user_id INTEGER PRIMARY KEY, count INTEGER)")
+    cursor.execute("UPDATE punishments SET count = 0 WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+def increment_punish_count(user_id):
+    conn = sqlite3.connect('punishments.db')
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS punishments (user_id INTEGER PRIMARY KEY, count INTEGER)")
+    current_count = get_punish_count(user_id)
+    new_count = current_count + 1
+    cursor.execute("INSERT OR REPLACE INTO punishments (user_id, count) VALUES (?, ?)", (user_id, new_count))
+    conn.commit()
+    conn.close()
+    return new_count

@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 from discord.ext.commands import CommandOnCooldown
-from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session, get_last_message_timestamp, set_last_message_timestamp
+from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session, get_last_message_timestamp, set_last_message_timestamp, increment_punish_count, get_punish_count, reset_punish_count
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,6 +19,7 @@ REQUIRED_PD_SPECIFIC_ROLE_NAME = os.getenv('REQUIRED_PD_SPECIFIC_ROLE_NAME').spl
 LOGS_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID'))
 LOGS_TAG_ROLE_NAME = os.getenv('LOGS_TAG_ROLE_NAME')
 RENEW_CHANNEL_ID = int(os.getenv('RENEW_CHANNEL_ID'))
+ALLOWED_PUNISH_CHANNEL_ID = int(os.getenv('ALLOWED_PUNISH_CHANNEL_ID'))
 
 # Initialize database
 init_db()
@@ -121,6 +122,10 @@ def is_allowed_admin_channel(ctx):
     """Check if the command is issued in the allowed admin channel"""
     return ctx.channel.id == ALLOWED_ADMIN_CHANNEL_ID
 
+def is_allowed_punish_channel(ctx):
+    """Check if the command is issued in the allowed admin channel"""
+    return ctx.channel.id == ALLOWED_PUNISH_CHANNEL_ID
+
 # this one is for the pd role check
 def has_required_pd_role(ctx):
     """Check if the user has the required role"""
@@ -137,6 +142,11 @@ def has_required_hr_role(ctx):
 def has_required_specific_role(ctx):
     user_roles = [role.name for role in ctx.author.roles]
     return any(role in user_roles for role in REQUIRED_PD_SPECIFIC_ROLE_NAME)
+
+def has_required_conducere_role(ctx):
+    """Check if the user has the required role"""
+    role = discord.utils.get(ctx.guild.roles, name=LOGS_TAG_ROLE_NAME)
+    return role in ctx.author.roles
 
 @bot.command()
 @cooldown(1,1.5,BucketType.default)
@@ -221,7 +231,7 @@ async def worked(ctx, date: str = None, user: discord.Member = None):
         await ctx.send(f"{ctx.author.mention}, you can only use this command in {allowed_channel.mention}.", delete_after=3)
         return
 
-    if not has_required_hr_role(ctx):
+    if not (has_required_hr_role(ctx) or has_required_conducere_role(ctx)):
         await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
         await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
         return
@@ -451,21 +461,89 @@ async def helpme(ctx, action: str = None):
     if action == "pontaje":
         help_text = """
         **Available commands:**
-        - `/clockin`: Starts the work session
-        - `/clockout`: Calculate the time difference between clock-in and clock-out
-        - `/helpme`: Show the list of available commands
+        > `/clockin`: Starts the work session
+        > `/clockout`: Calculate the time difference between clock-in and clock-out
         """
     elif action == "hr":
         help_text = """
         **Available commands:**
-        - `/worked [date] [user]`: Show total worked time for all users or a specific user on a specific date (default: today)
-        - `/rmv [user] [date] [index]`: Remove a specific clock-in/out session for a user on a specific date by index (ONLY USE THIS IF YOU NOTICE SOMEONE THAT LEFT HIS CLOCK IN OPENED AND CLOSED IT EVEN THO THEY WERE NOT ONLINE)
-        - `/ongoing [user] [action]`: Show ongoing work sessions for all users or stop a specific user's ongoing session
-        - `/addminutes [user] [date] [minutes]`: Add minutes to the last clock-in session for a user on a specific date or create a new session if none exists (IF YOU ABUSE THIS COMMAND YOU WILL BE DEMITTED)
-        - `/helpme`: Show the list of available commands
-        - When typing the date parameter, use the format YYYY-MM-DD
+        > `/worked [date] [user]`: Show total worked time for all users or a specific user on a specific date (default: today)
+        > `/rmv [user] [date] [index]`: Remove a specific clock-in/out session for a user on a specific date by index (ONLY USE THIS IF YOU NOTICE SOMEONE THAT LEFT HIS CLOCK IN OPENED AND CLOSED IT EVEN THO THEY WERE NOT ONLINE)
+        > `/ongoing [user] [action]`: Show ongoing work sessions for all users or stop a specific user's ongoing session
+        > `/addminutes [user] [date] [minutes]`: Add minutes to the last clock-in session for a user on a specific date or create a new session if none exists (IF YOU ABUSE THIS COMMAND YOU WILL BE DEMITTED)
+        > `/punish [user] [message] [action]`: Punish a user with a warning message ( Gives a warning to the user. ALWAYS PUNISH AFTER REMOVING THE SESSION OR STOPPING THE SESSION)
+
+        > ***When typing the date parameter, use the format YYYY-MM-DD***
+        """
+    elif action == "admin":
+        help_text = """
+        **Available commands:**
+        > `/renewmessage`: Show the last message timestamp
+        > `/settimestamp [timestamp]`: Set the timestamp of the last message
+        > `/helpme [action]`: Show the list of available commands for a specific action
         """
     await ctx.send(help_text)
 
+@bot.command()
+async def punish(ctx, user: discord.Member, message: str = None, action: str = None):
+    await ctx.message.delete()
+
+    if not message:
+        await ctx.send(f"{ctx.author.mention}, please provide a message for the warning.", delete_after=3)
+        return
+
+    if not (has_required_hr_role(ctx) or has_required_conducere_role(ctx)):
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    if not is_allowed_punish_channel(ctx):
+        allowed_channel = ctx.guild.get_channel(ALLOWED_PUNISH_CHANNEL_ID)
+        await ctx.send(f"{ctx.author.mention}, you can only use this command in {allowed_channel.mention}.", delete_after=3)
+        return
+
+    user_id = user.id
+
+    if action == "reset":
+        if not has_required_conducere_role(ctx):
+            await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        reset_punish_count(user_id)
+        await ctx.send(f"{ctx.author.mention} has reset the punish count for {user.mention}.", delete_after=3)
+        await user.send(f"Your punish count has been reset by {ctx.author.mention}.")
+        logging.info(f"User {ctx.author.mention} reset the punish count for {user.mention}.")
+        logging.warning(f"User {ctx.author.mention} reset the punish count for {user.mention}.")
+        return
+    elif action == "?":
+        current_count = get_punish_count(user_id)
+        await ctx.send(f"{user.mention} has {current_count} warnings.")
+        return
+
+    current_count = get_punish_count(user_id)
+
+    if current_count >= 5:
+        await ctx.send(f"{ctx.author.mention}, {user.mention} has already reached the maximum number of punishments.", delete_after=3)
+        return
+
+    new_count = increment_punish_count(user_id)
+    conducere = discord.utils.get(ctx.guild.roles, name=LOGS_TAG_ROLE_NAME)
+    hr = discord.utils.get(ctx.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+    if(new_count == 5):
+        punish_text=f"""
+        ||{conducere.mention}{hr.mention}||
+        ### {user.mention} got a warning from {ctx.author.mention}.
+        This is warning number **{new_count} / 5**.
+        ```{message if message else ''}```
+        """
+    else:
+        punish_text=f"""
+        ### {user.mention} got a warning from {ctx.author.mention}.
+        This is warning number **{new_count} / 5**.
+        ```{message if message else ''}```
+        """
+    await ctx.send(punish_text)
+    await user.send("You have been given a warning by the HR team. Check the discord server for more information.")
+
+    logging.info(punish_text)
+    logging.warning(punish_text)
+    
 # Run the bot with your token
 bot.run(TOKEN)

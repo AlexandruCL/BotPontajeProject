@@ -1,159 +1,165 @@
-2025-01-27 23:30:00,456 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-27 23:30:00,458 - discord.client - INFO - logging in using static token
-2025-01-27 23:30:01,668 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: da6fce043b107e18c187bb8f191f1184).
-2025-01-27 23:30:16,885 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27, but no records were found.
-2025-01-27 23:30:20,465 - root - INFO - User alexandru_cl clocked in at 23:30:19 on 2025-01-27.
-2025-01-27 23:30:24,779 - root - WARNING - <@&1331305631520653392> <@&1331305631520653392>
-2025-01-27 23:30:24,779 - root - WARNING - User <@286492096242909185> tried to clock in with an active session.
-2025-01-27 23:31:23,640 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-27 23:31:23,642 - discord.client - INFO - logging in using static token
-2025-01-27 23:31:24,736 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: b66d92736cdae92727e4831824c78033).
-2025-01-27 23:31:30,166 - root - WARNING - <@&1331305631520653392> <@&1331305631520653392>
-2025-01-27 23:31:30,166 - root - WARNING - User <@286492096242909185> tried to clock in with an active session. Session: 23:30:19
-2025-01-27 23:37:35,051 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-27 23:37:35,054 - discord.client - INFO - logging in using static token
-2025-01-27 23:37:36,259 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 205e77fbb565f31cc872021d98df9927).
-2025-01-27 23:37:49,583 - root - INFO - User <@286492096242909185> added **0.27 minutes** to the total worked time for <@286492096242909185> on 2025-01-27. Total: 2.93 minutes.
-2025-01-27 23:37:49,583 - root - WARNING - Command: /addminutes, User: <@286492096242909185>, Target: <@286492096242909185>, Date: 2025-01-27, Minutes: 0.27
-2025-01-27 23:38:28,287 - root - INFO - User alexandru_cl requested worked time report for <@286492096242909185>, but no records were found.
-2025-01-27 23:38:35,747 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:38:48,460 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27, but no records were found.
-2025-01-27 23:39:11,536 - root - INFO - User alexandru_cl requested worked time report for <@286492096242909185>, but no records were found.
-2025-01-27 23:39:17,109 - root - WARNING - <@&1331305631520653392> <@&1331305631520653392>
-2025-01-27 23:39:17,109 - root - WARNING - User <@286492096242909185> tried to clock in with an active session. Session started at: 23:30:19
-2025-01-27 23:39:20,681 - root - INFO - User alexandru_cl clocked out at 23:39:20 on 2025-01-27. Total time: 10.00 minutes.
-2025-01-27 23:39:28,407 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:39:35,760 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:39:56,058 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:40:04,721 - root - INFO - User <@286492096242909185> added **9.02 minutes** to the total worked time for <@286492096242909185> on 2025-01-27. Total: 20.70 minutes.
-2025-01-27 23:40:04,721 - root - WARNING - Command: /addminutes, User: <@286492096242909185>, Target: <@286492096242909185>, Date: 2025-01-27, Minutes: 9.02
-2025-01-27 23:40:18,470 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:40:23,203 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:45:17,172 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-27 23:45:17,174 - discord.client - INFO - logging in using static token
-2025-01-27 23:45:18,488 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: ae0b9d7db5f30749d5bd0e534d96fea3).
-2025-01-27 23:45:28,263 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-27 23:45:35,840 - root - INFO - User <@286492096242909185> created a new session for <@286492096242909185> with 10.00 minutes. Clock-in time: 00:00:00, Clock-out time: 00:10:00.
-2025-01-27 23:45:44,131 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 00:50:16,172 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 00:50:16,175 - discord.client - INFO - logging in using static token
-2025-01-28 00:50:17,240 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: ec519e4002d45531cc924ff07d1fb96b).
-2025-01-28 00:50:24,185 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 00:52:14,187 - root - INFO - User <@286492096242909185> created a new session for <@286492096242909185> with 100.00 minutes. Clock-in time: 00:00:00, Clock-out time: 01:40:00.
-2025-01-28 00:52:19,638 - root - INFO - User alexandru_cl requested worked time report for 2025-01-28.
-2025-01-28 00:52:27,980 - root - INFO - User alexandru_cl requested worked time report for 2025-01-28.
-2025-01-28 00:52:50,882 - root - WARNING - Command: /rmv, User: <@286492096242909185>, Target: <@286492096242909185>, Date: 2025-01-28, Index: 1, Session: ('00:00:00', '01:40:00')
-2025-01-28 00:52:50,882 - root - INFO - User <@286492096242909185> removed session for <@286492096242909185> on 2025-01-28 at index 1. Session: ('00:00:00', '01:40:00')
-2025-01-28 02:04:19,864 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:04:19,866 - discord.client - INFO - logging in using static token
-2025-01-28 02:04:21,076 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 6c9f4e9ba73fad18b7205505e1282af7).
-2025-01-28 02:07:17,894 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:07:17,897 - discord.client - INFO - logging in using static token
-2025-01-28 02:07:19,096 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 88984a17d6d307e23e87a8e01bbffae6).
-2025-01-28 02:07:43,345 - discord.client - ERROR - Ignoring exception in on_command_error
+2025-01-28 03:44:56,621 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:44:56,624 - discord.client - INFO - logging in using static token
+2025-01-28 03:44:57,715 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: d204233eba3883b455fea524b6fb1f58).
+2025-01-28 03:46:51,657 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:46:51,660 - discord.client - INFO - logging in using static token
+2025-01-28 03:46:52,896 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: a510af6d621ea0b0fff3354ac202999d).
+2025-01-28 03:48:14,456 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:48:14,458 - discord.client - INFO - logging in using static token
+2025-01-28 03:48:15,811 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: daacac95aab809f979380d39d34e5480).
+2025-01-28 03:49:08,270 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:49:08,272 - discord.client - INFO - logging in using static token
+2025-01-28 03:49:09,399 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: d75299217871226348cf1075d192839c).
+2025-01-28 03:50:05,421 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:50:05,423 - discord.client - INFO - logging in using static token
+2025-01-28 03:50:06,644 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 9b2b3bf03f4e92f48a81773272172063).
+2025-01-28 03:50:13,565 - discord.app_commands.tree - ERROR - Ignoring exception in command tree
 Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 235, in wrapped
-    ret = await coro(*args, **kwargs)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\BotPontajeProject\bot.py", line 423, in setlastmessage
-    set_last_message_timestamp(timestamp, date)
-TypeError: set_last_message_timestamp() takes 1 positional argument but 2 were given
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "D:\BotPontajeProject\bot.py", line 67, in on_command_error
-    raise error
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\bot.py", line 1366, in invoke
-    await ctx.command.invoke(ctx)
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 1029, in invoke
-    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 244, in wrapped
-    raise CommandInvokeError(exc) from exc
-discord.ext.commands.errors.CommandInvokeError: Command raised an exception: TypeError: set_last_message_timestamp() takes 1 positional argument but 2 were given
-2025-01-28 02:10:11,688 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:10:11,690 - discord.client - INFO - logging in using static token
-2025-01-28 02:10:12,835 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 44e2c9382e5ecb84f879f8a79dc9f450).
-2025-01-28 02:11:07,537 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:11:07,539 - discord.client - INFO - logging in using static token
-2025-01-28 02:11:08,530 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 96dd8701ba03e3854b73b9f0a889968c).
-2025-01-28 02:11:25,802 - discord.client - ERROR - Ignoring exception in on_command_error
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 235, in wrapped
-    ret = await coro(*args, **kwargs)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\BotPontajeProject\bot.py", line 423, in setrenewmessage
-    set_last_message_timestamp(timestamp, date)
-TypeError: set_last_message_timestamp() takes 1 positional argument but 2 were given
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "D:\BotPontajeProject\bot.py", line 67, in on_command_error
-    raise error
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\bot.py", line 1366, in invoke
-    await ctx.command.invoke(ctx)
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 1029, in invoke
-    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 244, in wrapped
-    raise CommandInvokeError(exc) from exc
-discord.ext.commands.errors.CommandInvokeError: Command raised an exception: TypeError: set_last_message_timestamp() takes 1 positional argument but 2 were given
-2025-01-28 02:12:58,339 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:12:58,341 - discord.client - INFO - logging in using static token
-2025-01-28 02:12:59,395 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 4d0c1b71ba82dfc69d7e93358bc0a84d).
-2025-01-28 02:13:13,973 - discord.client - ERROR - Ignoring exception in on_command_error
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 235, in wrapped
-    ret = await coro(*args, **kwargs)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\BotPontajeProject\bot.py", line 423, in setrenewmessage
-    set_last_message_timestamp(timestamp)
-  File "D:\BotPontajeProject\database.py", line 31, in set_last_message_timestamp
-    c.execute('INSERT OR REPLACE INTO timestamps (id, last_message) VALUES (1, ?)', (timestamp.isoformat(),))
-                                                                                     ^^^^^^^^^^^^^^^^^^^
-AttributeError: 'str' object has no attribute 'isoformat'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "D:\BotPontajeProject\bot.py", line 67, in on_command_error
-    raise error
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\bot.py", line 1366, in invoke
-    await ctx.command.invoke(ctx)
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 1029, in invoke
-    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\ext\commands\core.py", line 244, in wrapped
-    raise CommandInvokeError(exc) from exc
-discord.ext.commands.errors.CommandInvokeError: Command raised an exception: AttributeError: 'str' object has no attribute 'isoformat'
-2025-01-28 02:14:07,449 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:14:07,450 - discord.client - INFO - logging in using static token
-2025-01-28 02:14:08,477 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: d5754db70394a479285c6b34a5e874ef).
-2025-01-28 02:15:53,859 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:15:53,861 - discord.client - INFO - logging in using static token
-2025-01-28 02:15:55,279 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 6fa5d41aa687899f2e5594f8f54b6c78).
-2025-01-28 02:19:15,882 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 02:19:30,273 - discord.client - ERROR - Ignoring exception in on_command_error
-Traceback (most recent call last):
-  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
-    await coro(*args, **kwargs)
-  File "D:\BotPontajeProject\bot.py", line 67, in on_command_error
-    raise error
-discord.ext.commands.errors.CommandNotFound: Command "addtime" is not found
-2025-01-28 02:19:57,207 - root - WARNING - User <@286492096242909185> created a new session for <@1330671570750013455> with 50.00 minutes. Clock-in time: 00:00:00, Clock-out time: 00:50:00.
-2025-01-28 02:20:08,864 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 02:20:22,536 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 02:20:31,016 - root - WARNING - Command: /rmv, User: <@286492096242909185>, Target: <@1330671570750013455>, Date: 2025-01-27, Index: 1, Session: ('00:00:00', '00:50:00')
-2025-01-28 02:20:31,016 - root - INFO - User <@286492096242909185> removed session for <@1330671570750013455> on 2025-01-27 at index 1. Session: ('00:00:00', '00:50:00')
-2025-01-28 02:20:36,317 - root - INFO - User alexandru_cl requested worked time report for 2025-01-27.
-2025-01-28 02:26:26,583 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
-2025-01-28 02:26:26,585 - discord.client - INFO - logging in using static token
-2025-01-28 02:26:27,701 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: c1b5dee26982665256eec88c3f1b09c8).
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\app_commands\tree.py", line 1151, in wrapper
+    await self._call(interaction)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\app_commands\tree.py", line 1283, in _call
+    command, options = self._get_app_command_options(data)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\app_commands\tree.py", line 1187, in _get_app_command_options
+    raise CommandNotFound(name, parents)
+discord.app_commands.errors.CommandNotFound: Application command 'clockin' not found
+2025-01-28 03:50:42,121 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:50:42,124 - discord.client - INFO - logging in using static token
+2025-01-28 03:50:43,191 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 8a6496f5e802d331a7f002898aa11447).
+2025-01-28 03:51:12,747 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 03:51:12,757 - discord.client - INFO - logging in using static token
+2025-01-28 03:51:14,117 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 41cab268562b461540876a8487ca2f66).
+2025-01-28 04:24:19,115 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:24:19,118 - discord.client - INFO - logging in using static token
+2025-01-28 04:24:20,374 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: b68dc12ad2ce766e155c872d87390384).
+2025-01-28 04:24:48,747 - root - INFO - 
+        {ctx.author.mention} has punished {user.mention}.
+        This is warning number **{new_count} / 5**.
+        {message if message else ''}
+        
+2025-01-28 04:24:48,747 - root - WARNING - 
+        {ctx.author.mention} has punished {user.mention}.
+        This is warning number **{new_count} / 5**.
+        {message if message else ''}
+        
+2025-01-28 04:27:17,404 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:27:17,406 - discord.client - INFO - logging in using static token
+2025-01-28 04:27:19,796 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 34f9cf71f3a62db5364bd1ce2a6a52c8).
+2025-01-28 04:27:28,191 - root - INFO - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **2 / 5**.
+        remove
+        
+2025-01-28 04:27:28,191 - root - WARNING - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **2 / 5**.
+        remove
+        
+2025-01-28 04:27:49,508 - root - INFO - User <@286492096242909185> reset the punish count for <@286492096242909185>.
+2025-01-28 04:27:49,508 - root - WARNING - User <@286492096242909185> reset the punish count for <@286492096242909185>.
+2025-01-28 04:28:02,031 - root - INFO - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **1 / 5**.
+        aaa
+        
+2025-01-28 04:28:02,031 - root - WARNING - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **1 / 5**.
+        aaa
+        
+2025-01-28 04:28:10,006 - root - INFO - 
+        <@286492096242909185> has punished <@1330671570750013455>.
+        This is warning number **1 / 5**.
+        asda
+        
+2025-01-28 04:28:10,006 - root - WARNING - 
+        <@286492096242909185> has punished <@1330671570750013455>.
+        This is warning number **1 / 5**.
+        asda
+        
+2025-01-28 04:29:07,157 - root - INFO - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **2 / 5**.
+        asda
+        
+2025-01-28 04:29:07,157 - root - WARNING - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **2 / 5**.
+        asda
+        
+2025-01-28 04:29:08,496 - root - INFO - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **3 / 5**.
+        asda
+        
+2025-01-28 04:29:08,496 - root - WARNING - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **3 / 5**.
+        asda
+        
+2025-01-28 04:29:09,546 - root - INFO - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **4 / 5**.
+        asda
+        
+2025-01-28 04:29:09,546 - root - WARNING - 
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **4 / 5**.
+        asda
+        
+2025-01-28 04:29:11,076 - root - INFO - 
+        ||<@&1331305631520653392><@&1331305631520653392>||
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **5 / 5**.
+        asda
+        
+2025-01-28 04:29:11,076 - root - WARNING - 
+        ||<@&1331305631520653392><@&1331305631520653392>||
+        <@286492096242909185> has punished <@286492096242909185>.
+        This is warning number **5 / 5**.
+        asda
+        
+2025-01-28 04:32:56,193 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:32:56,196 - discord.client - INFO - logging in using static token
+2025-01-28 04:32:57,379 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: b522a799531988325f9126c6d45bf4d0).
+2025-01-28 04:33:07,353 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:33:07,356 - discord.client - INFO - logging in using static token
+2025-01-28 04:33:08,526 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: dabc8f6c849d662e644b73dc3ec1a745).
+2025-01-28 04:33:16,427 - root - INFO - User <@286492096242909185> reset the punish count for <@286492096242909185>.
+2025-01-28 04:33:16,427 - root - WARNING - User <@286492096242909185> reset the punish count for <@286492096242909185>.
+2025-01-28 04:33:23,856 - root - INFO - 
+        <@286492096242909185> got a warning by <@286492096242909185>.
+        ` This is warning number **1 / 5**. `
+        ```asa```
+        
+2025-01-28 04:33:23,856 - root - WARNING - 
+        <@286492096242909185> got a warning by <@286492096242909185>.
+        ` This is warning number **1 / 5**. `
+        ```asa```
+        
+2025-01-28 04:34:00,214 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:34:00,217 - discord.client - INFO - logging in using static token
+2025-01-28 04:34:01,316 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 780667376c71d63a11ec16dcfb1c6f1e).
+2025-01-28 04:34:07,309 - root - INFO - 
+        # <@286492096242909185> got a warning by <@286492096242909185>.
+        This is warning number **2 / 5**.
+        ```asdasda```
+        
+2025-01-28 04:34:07,309 - root - WARNING - 
+        # <@286492096242909185> got a warning by <@286492096242909185>.
+        This is warning number **2 / 5**.
+        ```asdasda```
+        
+2025-01-28 04:34:25,310 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-01-28 04:34:25,313 - discord.client - INFO - logging in using static token
+2025-01-28 04:34:26,484 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 0a0584f1b896d14277357b0c6d3a4dae).
+2025-01-28 04:34:31,015 - root - INFO - 
+        ### <@286492096242909185> got a warning by <@286492096242909185>.
+        This is warning number **3 / 5**.
+        ```asda```
+        
+2025-01-28 04:34:31,015 - root - WARNING - 
+        ### <@286492096242909185> got a warning by <@286492096242909185>.
+        This is warning number **3 / 5**.
+        ```asda```
+        
