@@ -20,6 +20,7 @@ LOGS_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID'))
 LOGS_TAG_ROLE_NAME = os.getenv('LOGS_TAG_ROLE_NAME')
 RENEW_CHANNEL_ID = int(os.getenv('RENEW_CHANNEL_ID'))
 ALLOWED_PUNISH_CHANNEL_ID = int(os.getenv('ALLOWED_PUNISH_CHANNEL_ID'))
+ATRIBUTII_ROLE_NAME=os.getenv('ATRIBUTII_ROLE_NAME')
 
 # Initialize database
 init_db()
@@ -72,12 +73,27 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_member_update(before, after):
     hr_role = discord.utils.get(after.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+    pd_role = discord.utils.get(after.guild.roles, name=REQUIRED_PD_ROLE_NAME)
+    atributii_role=discord.utils.get(after.guild.roles, name=ATRIBUTII_ROLE_NAME)
     if hr_role and hr_role not in before.roles and hr_role in after.roles:
         logging.info(f"User {after.mention} received the {hr_role.mention} role.")
         channel = bot.get_channel(LOGS_CHANNEL_ID)
         role = discord.utils.get(after.guild.roles, name=LOGS_TAG_ROLE_NAME)
         if channel:
             await channel.send(f"|| {role.mention} || User {after.mention} received the {hr_role.mention} role.")
+        channel = bot.get_channel(LOGS_CHANNEL_ID)
+        role = discord.utils.get(after.guild.roles, name=LOGS_TAG_ROLE_NAME)
+        if channel:
+            await channel.send(f"|| {role.mention} || User {after.mention} received the {pd_role.mention} role.")
+    
+    if pd_role and pd_role not in before.roles and pd_role in after.roles:
+        if atributii_role and atributii_role not in after.roles:
+            await after.add_roles(atributii_role)
+            logging.info(f"User {after.mention} received the {pd_role.mention} and {atributii_role.mention} role.")
+            channel = bot.get_channel(LOGS_CHANNEL_ID)
+            role = discord.utils.get(after.guild.roles, name=LOGS_TAG_ROLE_NAME)
+            if channel:
+                await channel.send(f"|| {role.mention} || User {after.mention} received the {pd_role.mention} and {atributii_role.mention} role.")
 
 @bot.event
 async def on_ready():
@@ -226,7 +242,7 @@ async def worked(ctx, date: str = None, user: discord.Member = None):
     """Show total worked time for all users or a specific user on a specific date (default: today)"""
     await ctx.message.delete()
     if not is_allowed_admin_channel(ctx):
-        allowed_channel = ctx.guild.get_channel(ALLOWED_CHANNEL_ID)
+        allowed_channel = ctx.guild.get_channel(ALLOWED_ADMIN_CHANNEL_ID)
         await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
         await ctx.send(f"{ctx.author.mention}, you can only use this command in {allowed_channel.mention}.", delete_after=3)
         return
@@ -344,7 +360,7 @@ async def ongoing(ctx, user: discord.Member = None, action: str = None):
         for session in sessions:
             if session[1] is None:
                 if action == "stop":
-                    if has_required_hr_role(ctx):
+                    if (has_required_hr_role(ctx) or has_required_conducere_role(ctx)):
                         remove_session(user_id, current_time.strftime("%Y-%m-%d"), session[0])
                         await ctx.send(f"```--------------------------------------------------------```")
                         await ctx.send(f"{ctx.author.mention}, stopped and removed clock-in for {user.mention} at {session[0]}.")
@@ -471,8 +487,9 @@ async def helpme(ctx, action: str = None):
         > `/rmv [user] [date] [index]`: Remove a specific clock-in/out session for a user on a specific date by index (ONLY USE THIS IF YOU NOTICE SOMEONE THAT LEFT HIS CLOCK IN OPENED AND CLOSED IT EVEN THO THEY WERE NOT ONLINE)
         > `/ongoing [user] [action]`: Show ongoing work sessions for all users or stop a specific user's ongoing session
         > `/addminutes [user] [date] [minutes]`: Add minutes to the last clock-in session for a user on a specific date or create a new session if none exists (IF YOU ABUSE THIS COMMAND YOU WILL BE DEMITTED)
-        > `/punish [user] [message] [action]`: Punish a user with a warning message ( Gives a warning to the user. ALWAYS PUNISH AFTER REMOVING THE SESSION OR STOPPING THE SESSION)
-
+        > `/warn [user] [message]`: Warns a user with a warning message ( Gives a warning to the user. ALWAYS PUNISH AFTER REMOVING THE SESSION OR STOPPING THE SESSION)
+        > *For the last command, if the message is `reset`, the command will reset the warns count for the user and if the message is `?` the command will show the current warns count for the user*
+        > Only CONDUCERE has access to reset. Please use `reset [message]` to reset the warns count for a user and also provide the message.
         > ***When typing the date parameter, use the format YYYY-MM-DD***
         """
     elif action == "admin":
@@ -485,7 +502,7 @@ async def helpme(ctx, action: str = None):
     await ctx.send(help_text)
 
 @bot.command()
-async def punish(ctx, user: discord.Member, message: str = None, action: str = None):
+async def warn(ctx, user: discord.Member,*, message: str = None):
     await ctx.message.delete()
 
     if not message:
@@ -503,16 +520,23 @@ async def punish(ctx, user: discord.Member, message: str = None, action: str = N
 
     user_id = user.id
 
-    if action == "reset":
+    if message.startswith("reset"):
         if not has_required_conducere_role(ctx):
             await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+            return
         reset_punish_count(user_id)
-        await ctx.send(f"{ctx.author.mention} has reset the punish count for {user.mention}.", delete_after=3)
-        await user.send(f"Your punish count has been reset by {ctx.author.mention}.")
-        logging.info(f"User {ctx.author.mention} reset the punish count for {user.mention}.")
-        logging.warning(f"User {ctx.author.mention} reset the punish count for {user.mention}.")
+        reset_message = message[5:]
+        afterreset = get_punish_count(user_id)
+        await ctx.send(f"""{ctx.author.mention} has reset the warns count for {user.mention}.
+                       {user.mention} now has {afterreset} / 5 warnings.
+                       ```{reset_message if reset_message else ''}```""")
+        await user.send(f"""Your warns count has been reset by {ctx.author.mention}. 
+                        You now have {afterreset} / 5 warnings.
+                        ```{reset_message if reset_message else ''}```""")
+        logging.info(f"User {ctx.author.mention} reset the warns count for {user.mention}. ")
+        logging.warning(f"User {ctx.author.mention} reset the warns count for {user.mention}.")
         return
-    elif action == "?":
+    elif message.startswith("?"):
         current_count = get_punish_count(user_id)
         await ctx.send(f"{user.mention} has {current_count} warnings.")
         return
@@ -520,7 +544,7 @@ async def punish(ctx, user: discord.Member, message: str = None, action: str = N
     current_count = get_punish_count(user_id)
 
     if current_count >= 5:
-        await ctx.send(f"{ctx.author.mention}, {user.mention} has already reached the maximum number of punishments.", delete_after=3)
+        await ctx.send(f"{ctx.author.mention}, {user.mention} has already reached the maximum number of warns.", delete_after=3)
         return
 
     new_count = increment_punish_count(user_id)
@@ -528,9 +552,9 @@ async def punish(ctx, user: discord.Member, message: str = None, action: str = N
     hr = discord.utils.get(ctx.guild.roles, name=REQUIRED_HR_ROLE_NAME)
     if(new_count == 5):
         punish_text=f"""
-        ||{conducere.mention}{hr.mention}||
         ### {user.mention} got a warning from {ctx.author.mention}.
         This is warning number **{new_count} / 5**.
+        ||{conducere.mention}{hr.mention}||
         ```{message if message else ''}```
         """
     else:
