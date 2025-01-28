@@ -61,10 +61,22 @@ logger.addHandler(discord_handler)
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandOnCooldown):
-        await ctx.message.delete()
-        await ctx.send(f"{ctx.author.mention}, this command is on cooldown. Please wait {error.retry_after:.2f} seconds.", delete_after=3)
+        await ctx.send(f"{ctx.author.mention}, this command is on cooldown. Try again in {error.retry_after:.2f} seconds.", delete_after=3)
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.send(f"{ctx.author.mention}, this command does not exist.", delete_after=3)
     else:
-        raise error
+        await ctx.send(f"{ctx.author.mention}, an error occurred: {str(error)}", delete_after=3)
+        logging.error(f"An error occurred: {str(error)}")
+
+@bot.event
+async def on_member_update(before, after):
+    hr_role = discord.utils.get(after.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+    if hr_role and hr_role not in before.roles and hr_role in after.roles:
+        logging.info(f"User {after.mention} received the {hr_role.mention} role.")
+        channel = bot.get_channel(LOGS_CHANNEL_ID)
+        role = discord.utils.get(after.guild.roles, name=LOGS_TAG_ROLE_NAME)
+        if channel:
+            await channel.send(f"|| {role.mention} || User {after.mention} received the {hr_role.mention} role.")
 
 @bot.event
 async def on_ready():
@@ -91,7 +103,7 @@ def send_scheduled_message():
     if channel:
         role = discord.utils.get(channel.guild.roles, name=REQUIRED_HR_ROLE_NAME)
         if role:
-            bot.loop.create_task(channel.send(f"{role.mention} Please RENEW the BOT"))
+            bot.loop.create_task(channel.send(f"||{role.mention}|| **Please RENEW the BOT**"))
         else:
             bot.loop.create_task(channel.send("Please RENEW the BOT"))
         set_last_message_timestamp(datetime.datetime.now())
@@ -154,7 +166,7 @@ async def clockin(ctx):
             role = discord.utils.get(ctx.guild.roles, name=LOGS_TAG_ROLE_NAME)
             hr = discord.utils.get(ctx.guild.roles, name=REQUIRED_HR_ROLE_NAME)
             logging.warning(f"{role.mention} {hr.mention}")
-            logging.warning(f"User {ctx.author.mention} tried to clock in with an active session.")
+            logging.warning(f"User {ctx.author.mention} tried to clock in with an active session. Session started at: {session[0]}")
             return
 
     add_clock_in(user_id, date_str, current_time.strftime("%H:%M:%S"))
@@ -237,7 +249,7 @@ async def worked(ctx, date: str = None, user: discord.Member = None):
 
         if total_minutes > 0:
             details_text = "\n".join(details)
-            report.append(f"**{user.mention}** - Total: {total_minutes:.2f} minutes\n{details_text}")
+            report.append(f"**{user.mention}** - Total: ({total_minutes:.2f}) minutes\n{details_text}")
         else:
             report.append(f"No work sessions found for {user.mention} on {date}.")
     else:
@@ -256,7 +268,7 @@ async def worked(ctx, date: str = None, user: discord.Member = None):
 
             if total_minutes > 0:
                 details_text = "\n".join(details)
-                report.append(f"**{member.mention}** - Total: {total_minutes:.2f} minutes\n{details_text}")
+                report.append(f"**{member.mention}** - Total: ({total_minutes:.2f}) minutes\n{details_text}")
 
     if report:
         report_text = "\n\n".join(report)
@@ -269,7 +281,6 @@ async def worked(ctx, date: str = None, user: discord.Member = None):
         logging.info(f"User {ctx.author} requested worked time report for {date}, but no records were found.")
 
 @bot.command()
-@cooldown(1,1.5,BucketType.default)
 async def rmv(ctx, user: discord.Member, date: str, index: int):
     """Remove a specific clock-in/out session for a user on a specific date by index"""
     await ctx.message.delete()
@@ -299,7 +310,6 @@ async def rmv(ctx, user: discord.Member, date: str, index: int):
     logging.warning(f"Command: /rmv, User: {ctx.author.mention}, Target: {user.mention}, Date: {date}, Index: {index}, Session: {session_to_remove}")
     logging.info(f"User {ctx.author.mention} removed session for {user.mention} on {date} at index {index}. Session: {session_to_remove}")
 
-
 @bot.command()
 async def ongoing(ctx, user: discord.Member = None, action: str = None):
     """Show ongoing work sessions for all users or stop a specific user's ongoing session"""
@@ -312,7 +322,7 @@ async def ongoing(ctx, user: discord.Member = None, action: str = None):
 
     if not (has_required_hr_role(ctx) or has_required_specific_role(ctx)):
         await ctx.send(f"```--------------------------------------------------------```", delete_after=3)
-        await ctx.send(f"{ctx.author.display_name}, you do not have permission to use this command.", delete_after=3)
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
         return
 
     report = []
@@ -354,6 +364,108 @@ async def ongoing(ctx, user: discord.Member = None, action: str = None):
         await ctx.send("Ongoing work sessions:\n\n" + "\n".join(report))
     else:
         await ctx.send("No ongoing work sessions found.", delete_after=3)
+
+@bot.command()
+async def addminutes(ctx, user: discord.Member, date: str, minutes: float):
+    """Add minutes to the last clock-in session for a user on a specific date or create a new session if none exists"""
+    await ctx.message.delete()
+    if not is_allowed_admin_channel(ctx):
+        allowed_channel = ctx.guild.get_channel(ALLOWED_ADMIN_CHANNEL_ID)
+        await ctx.send(f"{ctx.author.mention}, you can only use this command in {allowed_channel.mention}.", delete_after=3)
+        return
+
+    if not has_required_hr_role(ctx):
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    user_id = user.id
+    sessions = get_clock_times(user_id, date)
+    
+    if sessions:
+        last_session = sessions[-1]
+        if last_session[1] is None:
+            clock_in_time_str = f"{date} {last_session[0]}"
+            clock_in_time = datetime.datetime.strptime(clock_in_time_str, "%Y-%m-%d %H:%M:%S")
+            new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
+            update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
+            await ctx.send(f"{ctx.author.mention}, added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+            await user.send(f"Your last session on {date} was extended by {minutes:.2f} minutes by {ctx.author.mention}. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and `/clockout` to avoid this.")
+            logging.warning(f"User {ctx.author.mention} added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+            logging.info(f"User {ctx.author.mention} added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+        else:
+            clock_in_time = datetime.datetime.strptime(f"{date} 00:00:00", "%Y-%m-%d %H:%M:%S")
+            new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
+            add_clock_in(user_id, date, clock_in_time.strftime("%H:%M:%S"))
+            update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
+            await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+            await user.send(f"Your new session on {date} was created with {minutes:.2f} minutes by {ctx.author.mention}. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and  `/clockout` to avoid this.")
+            logging.warning(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+            logging.info(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+    else:
+        clock_in_time = datetime.datetime.strptime(f"{date} 00:00:00", "%Y-%m-%d %H:%M:%S")
+        new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
+        add_clock_in(user_id, date, clock_in_time.strftime("%H:%M:%S"))
+        update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
+        await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+        await user.send(f"Your new session on {date} was created with {minutes:.2f} minutes by {ctx.author.mention}. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and  `/clockout` to avoid this.")
+        logging.warning(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+        logging.info(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
+
+@bot.command()
+async def renewmessage(ctx):
+    """Show the last message timestamp"""
+    await ctx.message.delete()
+    if ctx.author.id != 286492096242909185:  # Replace YOUR_USER_ID with the actual user ID
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    last_timestamp = get_last_message_timestamp()
+    if last_timestamp:
+        await ctx.send(f"Last renew message: {last_timestamp}")
+    else:
+        await ctx.send("No last message timestamp found.")
+
+@bot.command()
+async def settimestamp(ctx, timestamp: str):
+    """Set the timestamp of the last message"""
+    await ctx.message.delete()
+    if ctx.author.id != 286492096242909185:  # Replace YOUR_USER_ID with the actual user ID
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    try:
+        new_timestamp = datetime.datetime.fromisoformat(timestamp)
+        set_last_message_timestamp(new_timestamp)
+        await ctx.send(f"Timestamp set to: {new_timestamp}")
+    except ValueError:
+            await ctx.send(f"Invalid timestamp format. Please use ISO format (YYYY-MM-DDTHH:MM:SS).", delete_after=3)
+
+@bot.command()
+async def helpme(ctx, action: str = None):
+    """Show the list of available commands"""
+    await ctx.message.delete()
+    if ctx.author.id != 286492096242909185:  # Replace YOUR_USER_ID with the actual user ID
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    if action == "pontaje":
+        help_text = """
+        **Available commands:**
+        - `/clockin`: Starts the work session
+        - `/clockout`: Calculate the time difference between clock-in and clock-out
+        - `/helpme`: Show the list of available commands
+        """
+    elif action == "hr":
+        help_text = """
+        **Available commands:**
+        - `/worked [date] [user]`: Show total worked time for all users or a specific user on a specific date (default: today)
+        - `/rmv [user] [date] [index]`: Remove a specific clock-in/out session for a user on a specific date by index (ONLY USE THIS IF YOU NOTICE SOMEONE THAT LEFT HIS CLOCK IN OPENED AND CLOSED IT EVEN THO THEY WERE NOT ONLINE)
+        - `/ongoing [user] [action]`: Show ongoing work sessions for all users or stop a specific user's ongoing session
+        - `/addminutes [user] [date] [minutes]`: Add minutes to the last clock-in session for a user on a specific date or create a new session if none exists (IF YOU ABUSE THIS COMMAND YOU WILL BE DEMITTED)
+        - `/helpme`: Show the list of available commands
+        - When typing the date parameter, use the format YYYY-MM-DD
+        """
+    await ctx.send(help_text)
 
 # Run the bot with your token
 bot.run(TOKEN)
