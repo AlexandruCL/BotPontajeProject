@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from dotenv import load_dotenv
 import os
 import datetime
@@ -100,31 +101,52 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     schedule_next_message()
 
-def schedule_next_message():
+sending_message = False
+
+def schedule_next_message(next_timestamp=None):
     """Schedule the next message based on the last message timestamp."""
-    last_timestamp = get_last_message_timestamp()
+    global sending_message
+    if sending_message:
+        return  # If a message is being sent, do not schedule another one
+
+    if next_timestamp:
+        last_timestamp = next_timestamp
+    else:
+        last_timestamp = get_last_message_timestamp()
+    
+    now = datetime.datetime.now()
     if last_timestamp:
-        now = datetime.datetime.now()
         next_timestamp = last_timestamp + datetime.timedelta(days=7)
+        logging.info(f"Timestamp: {last_timestamp}, Next timestamp: {next_timestamp}")
         delay = (next_timestamp - now).total_seconds()
+        logging.info(f"The delay is {delay}")
         if delay > 0:
-            bot.loop.call_later(delay, send_scheduled_message)
+            bot.loop.call_later(delay, lambda: asyncio.create_task(send_scheduled_message()))
         else:
-            send_scheduled_message()
+            asyncio.create_task(send_scheduled_message())
     else:
         send_scheduled_message()
 
-def send_scheduled_message():
+async def send_scheduled_message():
     """Send the scheduled message and update the timestamp."""
+    global sending_message
+    sending_message = True  # Set the flag to indicate a message is being sent
+
     channel = bot.get_channel(RENEW_CHANNEL_ID)
     if channel:
         role = discord.utils.get(channel.guild.roles, name=REQUIRED_HR_ROLE_NAME)
+        conducere = discord.utils.get(channel.guild.roles, name=LOGS_TAG_ROLE_NAME)
         if role:
-            bot.loop.create_task(channel.send(f"||{role.mention}|| **Please RENEW the BOT**"))
+            await channel.send(f"""||{role.mention}{conducere.mention}|| **Please RENEW the BOT**
+                               > Also set the timestamp using ***`/settimestamp 0`*** command.
+                               ` This message was sent on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. The next message will be sent in 7 days.`
+                               """)
         else:
-            bot.loop.create_task(channel.send("Please RENEW the BOT"))
-        set_last_message_timestamp(datetime.datetime.now())
-        schedule_next_message()
+            await channel.send("Please RENEW the BOT")
+        new_timestamp = datetime.datetime.now()
+        set_last_message_timestamp(new_timestamp)
+        schedule_next_message(new_timestamp)
+        sending_message = False  # Reset the flag after the message is sent
 
 def round_minutes(minutes):
     """Round minutes according to the specified rules"""
@@ -455,16 +477,21 @@ async def renewmessage(ctx):
 async def settimestamp(ctx, timestamp: str):
     """Set the timestamp of the last message"""
     await ctx.message.delete()
-    if ctx.author.id != 286492096242909185:  # Replace YOUR_USER_ID with the actual user ID
+    if ctx.author.id not in {286492096242909185}:  # Replace YOUR_USER_ID with the actual user ID
         await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
         return
 
     try:
-        new_timestamp = datetime.datetime.fromisoformat(timestamp)
+        if(timestamp[0] == '0'):
+            new_timestamp = datetime.datetime.now()
+        else:
+            new_timestamp = datetime.datetime.fromisoformat(timestamp)
         set_last_message_timestamp(new_timestamp)
-        await ctx.send(f"Timestamp set to: {new_timestamp}")
+        await ctx.send(f"> Timestamp set to: ***{new_timestamp}***")
+        schedule_next_message(new_timestamp)
     except ValueError:
-            await ctx.send(f"Invalid timestamp format. Please use ISO format (YYYY-MM-DDTHH:MM:SS).", delete_after=3)
+        await ctx.send(f"Invalid timestamp format. Please use ISO format (YYYY-MM-DDTHH:MM:SS).", delete_after=3)
+       
 
 @bot.command()
 async def helpme(ctx, action: str = None):
@@ -528,17 +555,17 @@ async def warn(ctx, user: discord.Member,*, message: str = None):
         reset_message = message[5:]
         afterreset = get_punish_count(user_id)
         await ctx.send(f"""{ctx.author.mention} has reset the warns count for {user.mention}.
-                       {user.mention} now has {afterreset} / 5 warnings.
+                       > {user.mention} now has ***{afterreset} / 5 warnings***.
                        ```{reset_message if reset_message else ''}```""")
         await user.send(f"""Your warns count has been reset by {ctx.author.mention}. 
-                        You now have {afterreset} / 5 warnings.
+                        > You now have ***{afterreset} / 5 warnings***.
                         ```{reset_message if reset_message else ''}```""")
         logging.info(f"User {ctx.author.mention} reset the warns count for {user.mention}. ")
         logging.warning(f"User {ctx.author.mention} reset the warns count for {user.mention}.")
         return
     elif message.startswith("?"):
         current_count = get_punish_count(user_id)
-        await ctx.send(f"{user.mention} has {current_count} warnings.")
+        await ctx.send(f"> {user.mention} has ***{current_count} warnings***.")
         return
 
     current_count = get_punish_count(user_id)
@@ -553,14 +580,14 @@ async def warn(ctx, user: discord.Member,*, message: str = None):
     if(new_count == 5):
         punish_text=f"""
         ### {user.mention} got a warning from {ctx.author.mention}.
-        This is warning number **{new_count} / 5**.
+        > This is warning number ***{new_count} / 5***.
         ||{conducere.mention}{hr.mention}||
         ```{message if message else ''}```
         """
     else:
         punish_text=f"""
         ### {user.mention} got a warning from {ctx.author.mention}.
-        This is warning number **{new_count} / 5**.
+        > This is warning number ***{new_count} / 5***.
         ```{message if message else ''}```
         """
     await ctx.send(punish_text)
