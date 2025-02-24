@@ -137,7 +137,8 @@ async def send_scheduled_message():
         role = discord.utils.get(channel.guild.roles, name=REQUIRED_HR_ROLE_NAME)
         conducere = discord.utils.get(channel.guild.roles, name=LOGS_TAG_ROLE_NAME)
         if role:
-            await channel.send(f"""||{role.mention}{conducere.mention}|| **Please RENEW the BOT**
+            await channel.send(f"""||{role.mention}{conducere.mention}|| 
+                                **Please RENEW the BOT**
                                > Also set the timestamp using ***`/settimestamp 0`*** command.
                                ` This message was sent on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. The next message will be sent in 7 days.`
                                """)
@@ -436,7 +437,7 @@ async def addminutes(ctx, user: discord.Member, date: str, minutes: float):
             clock_in_time = datetime.datetime.strptime(clock_in_time_str, "%Y-%m-%d %H:%M:%S")
             new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
             update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
-            await ctx.send(f"{ctx.author.mention}, added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+            await ctx.send(f"{ctx.author.mention}, added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}")
             await user.send(f"Your last session on {date} was extended by {minutes:.2f} minutes by {ctx.author.mention}. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and `/clockout` to avoid this.")
             logging.warning(f"User {ctx.author.mention} added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
             logging.info(f"User {ctx.author.mention} added {minutes:.2f} minutes to {user.mention}'s last session. New clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
@@ -445,7 +446,7 @@ async def addminutes(ctx, user: discord.Member, date: str, minutes: float):
             new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
             add_clock_in(user_id, date, clock_in_time.strftime("%H:%M:%S"))
             update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
-            await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+            await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}")
             await user.send(f"Your new session on {date} was created with {minutes:.2f} minutes by {ctx.author.mention}. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and  `/clockout` to avoid this.")
             logging.warning(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
             logging.info(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
@@ -454,7 +455,7 @@ async def addminutes(ctx, user: discord.Member, date: str, minutes: float):
         new_clock_out_time = clock_in_time + datetime.timedelta(minutes=minutes)
         add_clock_in(user_id, date, clock_in_time.strftime("%H:%M:%S"))
         update_clock_out(user_id, date, new_clock_out_time.strftime("%H:%M:%S"))
-        await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}", delete_after=3)
+        await ctx.send(f"{ctx.author.mention}, created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}")
         await user.send(f"Your new session on {date} was created with {minutes:.2f} minutes by {ctx.author.mention}. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}. Next time, please use `/clockin` and  `/clockout` to avoid this.")
         logging.warning(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
         logging.info(f"User {ctx.author.mention} created a new session for {user.mention} with {minutes:.2f} minutes. Clock-in time: {clock_in_time.strftime('%H:%M:%S')}, Clock-out time: {new_clock_out_time.strftime('%H:%M:%S')}.")
@@ -477,7 +478,7 @@ async def renewmessage(ctx):
 async def settimestamp(ctx, timestamp: str):
     """Set the timestamp of the last message"""
     await ctx.message.delete()
-    if ctx.author.id not in {286492096242909185}:  # Replace YOUR_USER_ID with the actual user ID
+    if not has_required_conducere_role(ctx): # Replace YOUR_USER_ID with the actual user ID
         await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
         return
 
@@ -526,7 +527,23 @@ async def helpme(ctx, action: str = None):
         > `/settimestamp [timestamp]`: Set the timestamp of the last message
         > `/helpme [action]`: Show the list of available commands for a specific action
         """
+    elif action == "warn":
+        help_text = """
+        **Available commands:**
+        > `/warn [user] [message]`: Warns a user with a warning message ( Gives a warning to the user. ALWAYS PUNISH AFTER REMOVING THE SESSION OR STOPPING THE SESSION)
+        
+         *For the last command, if the message is `reset`, the command will reset the warns count for the user and if the message is `?` the command will show the current warns count for the user*
+        > Only CONDUCERE has access to reset. Please use `reset [message]` to reset the warns count for a user and also provide the message.
+        """
     await ctx.send(help_text)
+
+@bot.command()
+async def say(ctx, *, message: str = None):
+    await ctx.message.delete()
+    if ctx.author.id != 286492096242909185:  # Replace YOUR_USER_ID with the actual user ID
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+    await ctx.send(message)
 
 @bot.command()
 async def warn(ctx, user: discord.Member,*, message: str = None):
