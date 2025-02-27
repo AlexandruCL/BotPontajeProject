@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 from discord.ext.commands import CommandOnCooldown
-from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session, get_last_message_timestamp, set_last_message_timestamp, increment_punish_count, get_punish_count, reset_punish_count
+from database import init_db, add_clock_in, update_clock_out, get_clock_times, get_ongoing_sessions, remove_session, get_base_timestamp, set_base_timestamp, increment_punish_count, get_punish_count, reset_punish_count
 
 # Load environment variables from .env file
 load_dotenv()
@@ -96,57 +96,83 @@ async def on_member_update(before, after):
             if channel:
                 await channel.send(f"|| {role.mention} || User {after.mention} received the {pd_role.mention} and {atributii_role.mention} role.")
 
+scheduled_task = None
+
 @bot.event
 async def on_ready():
+    global scheduled_task
+    
     print(f"Logged in as {bot.user}")
-    schedule_next_message()
+    base_timestamp = get_base_timestamp()
+
+    if base_timestamp:
+        if scheduled_task is None or scheduled_task.done():
+            scheduled_task = asyncio.create_task(schedule_recurring_messages(base_timestamp))
+        else:
+            print("A scheduled task is already running.")
 
 sending_message = False
 
-def schedule_next_message(next_timestamp=None):
-    """Schedule the next message based on the last message timestamp."""
-    global sending_message
-    if sending_message:
-        return  # If a message is being sent, do not schedule another one
+@bot.command()
+async def starttimestamps(ctx, timestamp: str):
+    """Start recurring messages every 7 days from the given timestamp."""
+    await ctx.message.delete()
 
-    if next_timestamp:
-        last_timestamp = next_timestamp
-    else:
-        last_timestamp = get_last_message_timestamp()
-    
+    if ctx.author.id not in {286492096242909185}:  # Replace with your actual user ID
+        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
+        return
+
+    try:
+        base_timestamp = datetime.datetime.fromisoformat(timestamp)
+        set_base_timestamp(base_timestamp)
+
+        await ctx.send(f"> Messages scheduled every 7 days from: ***{base_timestamp}***")
+
+        asyncio.create_task(schedule_recurring_messages(base_timestamp))  # Start scheduling
+    except ValueError:
+        await ctx.send("Invalid timestamp format. Use ISO format (YYYY-MM-DDTHH:MM:SS).", delete_after=3)
+
+async def schedule_recurring_messages(base_timestamp=None):
+    """Schedules messages every 7 days from the base timestamp."""
+    if not base_timestamp:
+        base_timestamp = get_base_timestamp()  # Retrieve from DB
+
+    if not base_timestamp:
+        logging.warning("No valid base timestamp found. Use `/starttimestamps YYYY-MM-DDTHH:MM:SS` first.")
+        return
+
     now = datetime.datetime.now()
-    if last_timestamp:
-        next_timestamp = last_timestamp + datetime.timedelta(days=7)
-        logging.info(f"Timestamp: {last_timestamp}, Next timestamp: {next_timestamp}")
-        delay = (next_timestamp - now).total_seconds()
-        logging.info(f"The delay is {delay}")
-        if delay > 0:
-            bot.loop.call_later(delay, lambda: asyncio.create_task(send_scheduled_message()))
-        else:
-            asyncio.create_task(send_scheduled_message())
-    else:
-        send_scheduled_message()
+
+    # Find the next valid timestamp in the 7-day cycle
+    while base_timestamp < now:
+        base_timestamp += datetime.timedelta(seconds=15)
+
+    delay = (base_timestamp - now).total_seconds()
+    
+    logging.info(f"Next message scheduled in {delay} seconds ({base_timestamp})")
+    
+    await asyncio.sleep(delay)  # Wait until the next timestamp
+    await send_scheduled_message()  # Send the message
+
+    # Schedule the next message after 7 days
+    asyncio.create_task(schedule_recurring_messages(base_timestamp + datetime.timedelta(seconds=15)))
 
 async def send_scheduled_message():
-    """Send the scheduled message and update the timestamp."""
-    global sending_message
-    sending_message = True  # Set the flag to indicate a message is being sent
-
+    """Send the scheduled message and log the event."""
     channel = bot.get_channel(RENEW_CHANNEL_ID)
     if channel:
         role = discord.utils.get(channel.guild.roles, name=REQUIRED_HR_ROLE_NAME)
         conducere = discord.utils.get(channel.guild.roles, name=LOGS_TAG_ROLE_NAME)
+
         if role:
-            await channel.send(f"""||{role.mention}{conducere.mention}|| **Please RENEW the BOT**
-                               > Also set the timestamp using ***`/settimestamp 0`*** command.
-                               ` This message was sent on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. The next message will be sent in 7 days.`
+            await channel.send(f"""||{role.mention}{conducere.mention}|| 
+                               **Please RENEW the BOT**
+                               > The next message will be sent in 7 days.
+                               `This message was sent on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`
                                """)
         else:
             await channel.send("Please RENEW the BOT")
-        new_timestamp = datetime.datetime.now()
-        set_last_message_timestamp(new_timestamp)
-        schedule_next_message(new_timestamp)
-        sending_message = False  # Reset the flag after the message is sent
+
 
 def round_minutes(minutes):
     """Round minutes according to the specified rules"""
@@ -472,27 +498,7 @@ async def renewmessage(ctx):
         await ctx.send(f"Last renew message: {last_timestamp}")
     else:
         await ctx.send("No last message timestamp found.")
-
-@bot.command()
-async def settimestamp(ctx, timestamp: str):
-    """Set the timestamp of the last message"""
-    await ctx.message.delete()
-    if ctx.author.id not in {286492096242909185}:  # Replace YOUR_USER_ID with the actual user ID
-        await ctx.send(f"{ctx.author.mention}, you do not have permission to use this command.", delete_after=3)
-        return
-
-    try:
-        if(timestamp[0] == '0'):
-            new_timestamp = datetime.datetime.now()
-        else:
-            new_timestamp = datetime.datetime.fromisoformat(timestamp)
-        set_last_message_timestamp(new_timestamp)
-        await ctx.send(f"> Timestamp set to: ***{new_timestamp}***")
-        schedule_next_message(new_timestamp)
-    except ValueError:
-        await ctx.send(f"Invalid timestamp format. Please use ISO format (YYYY-MM-DDTHH:MM:SS).", delete_after=3)
-       
-
+    
 @bot.command()
 async def helpme(ctx, action: str = None):
     """Show the list of available commands"""

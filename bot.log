@@ -163,3 +163,110 @@ discord.app_commands.errors.CommandNotFound: Application command 'clockin' not f
         This is warning number **3 / 5**.
         ```asda```
         
+2025-02-27 14:04:37,483 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:04:37,487 - discord.client - INFO - logging in using static token
+2025-02-27 14:04:38,562 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 9e3327229ab7d7000a55d71a95488747).
+2025-02-27 14:04:40,599 - root - INFO - Timestamp: 2025-01-28 03:44:59.737068, Next timestamp: 2025-01-28 03:45:04.737068
+2025-02-27 14:04:40,602 - root - INFO - The delay is -2629175.862742
+2025-02-27 14:04:42,956 - root - WARNING - A message is already being sent.
+2025-02-27 14:05:05,822 - root - INFO - Timestamp: 2025-02-27 14:05:05.404612, Next timestamp: 2025-02-27 14:05:10.404612
+2025-02-27 14:05:05,822 - root - INFO - The delay is 4.581946
+2025-02-27 14:05:10,674 - root - WARNING - A message is already being sent.
+2025-02-27 14:05:21,838 - root - INFO - Timestamp: 2025-02-27 14:05:21.589460, Next timestamp: 2025-02-27 14:05:26.589460
+2025-02-27 14:05:21,839 - root - INFO - The delay is 4.751277
+2025-02-27 14:05:26,842 - root - WARNING - A message is already being sent.
+2025-02-27 14:05:38,828 - root - INFO - Timestamp: 2025-02-27 14:05:38.529916, Next timestamp: 2025-02-27 14:05:43.529916
+2025-02-27 14:05:38,829 - root - INFO - The delay is 4.701694
+2025-02-27 14:05:41,741 - root - INFO - Timestamp: 2025-02-27 14:05:41.428079, Next timestamp: 2025-02-27 14:05:46.428079
+2025-02-27 14:05:41,741 - root - INFO - The delay is 4.687073
+2025-02-27 14:05:44,004 - root - WARNING - A message is already being sent.
+2025-02-27 14:05:46,699 - root - WARNING - A message is already being sent.
+2025-02-27 14:22:18,048 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:22:18,050 - discord.client - INFO - logging in using static token
+2025-02-27 14:22:19,068 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 6828908961f25f97b18bd51c597d8268).
+2025-02-27 14:23:07,192 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:23:07,196 - discord.client - INFO - logging in using static token
+2025-02-27 14:23:08,374 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 1b7491fa64c1baad9e8908b36a5e079f).
+2025-02-27 14:23:37,966 - root - INFO - Next message scheduled in 22.03446 seconds (2025-02-27 14:24:00)
+2025-02-27 14:24:00,290 - root - INFO - Next message scheduled in 604799.709967 seconds (2025-03-06 14:24:00)
+2025-02-27 14:24:48,414 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:24:48,418 - discord.client - INFO - logging in using static token
+2025-02-27 14:24:49,503 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 3c6f3048ec0a650d8880abf0f8a6674c).
+2025-02-27 14:24:51,536 - root - INFO - Next message scheduled in 8.463487 seconds (2025-02-27 14:25:00)
+2025-02-27 14:25:00,272 - root - INFO - Next message scheduled in 9.727944 seconds (2025-02-27 14:25:10)
+2025-02-27 14:25:05,795 - root - INFO - Next message scheduled in 4.204402 seconds (2025-02-27 14:25:10)
+2025-02-27 14:25:10,250 - root - INFO - Next message scheduled in 9.749589 seconds (2025-02-27 14:25:20)
+2025-02-27 14:25:10,414 - root - INFO - Next message scheduled in 9.585919 seconds (2025-02-27 14:25:20)
+2025-02-27 14:25:20,236 - root - INFO - Next message scheduled in 9.76385 seconds (2025-02-27 14:25:30)
+2025-02-27 14:25:20,253 - root - INFO - Next message scheduled in 9.746568 seconds (2025-02-27 14:25:30)
+2025-02-27 14:25:30,257 - root - INFO - Next message scheduled in 9.742366 seconds (2025-02-27 14:25:40)
+2025-02-27 14:25:30,291 - root - INFO - Next message scheduled in 9.70868 seconds (2025-02-27 14:25:40)
+2025-02-27 14:30:38,755 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:30:38,757 - discord.client - INFO - logging in using static token
+2025-02-27 14:30:40,193 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: f2a9078c05b2fa5dd308dd3d0cf2e1ca).
+2025-02-27 14:30:42,224 - root - INFO - Next message scheduled in 604447.775829 seconds (2025-03-06 14:24:50)
+2025-02-27 14:31:25,469 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:31:25,473 - discord.client - INFO - logging in using static token
+2025-02-27 14:31:26,549 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 1a5eb6cf18ac2a4fb8ef8b63e3b9d3c0).
+2025-02-27 14:31:28,570 - root - INFO - Next message scheduled in 0.430366 seconds (2025-02-27 14:31:29)
+2025-02-27 14:31:29,357 - root - INFO - Next message scheduled in 6.642277 seconds (2025-02-27 14:31:36)
+2025-02-27 14:31:36,270 - root - INFO - Next message scheduled in 6.729951 seconds (2025-02-27 14:31:43)
+2025-02-27 14:31:43,347 - root - INFO - Next message scheduled in 6.652426 seconds (2025-02-27 14:31:50)
+2025-02-27 14:31:48,774 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:31:48,776 - discord.client - INFO - logging in using static token
+2025-02-27 14:31:50,134 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: f67cf749a734425c2aca48070fb5861c).
+2025-02-27 14:31:52,147 - root - INFO - Next message scheduled in 4.852629 seconds (2025-02-27 14:31:57)
+2025-02-27 14:31:57,286 - root - INFO - Next message scheduled in 6.713582 seconds (2025-02-27 14:32:04)
+2025-02-27 14:32:04,255 - root - INFO - Next message scheduled in 6.744593 seconds (2025-02-27 14:32:11)
+2025-02-27 14:35:43,633 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:35:43,635 - discord.client - INFO - logging in using static token
+2025-02-27 14:35:44,717 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 7ef14bf7a51bfe05383bb990be3157ec).
+2025-02-27 14:35:46,773 - root - INFO - Next message scheduled in 3.226277 seconds (2025-02-27 14:35:50)
+2025-02-27 14:35:50,422 - root - INFO - Next message scheduled in 14.577055 seconds (2025-02-27 14:36:05)
+2025-02-27 14:36:05,273 - root - INFO - Next message scheduled in 14.726133 seconds (2025-02-27 14:36:20)
+2025-02-27 14:36:08,672 - root - INFO - Next message scheduled in 6.330595 seconds (2025-02-27 14:36:15)
+2025-02-27 14:36:15,321 - root - INFO - Next message scheduled in 14.678335 seconds (2025-02-27 14:36:30)
+2025-02-27 14:36:20,248 - root - INFO - Next message scheduled in 14.75155 seconds (2025-02-27 14:36:35)
+2025-02-27 14:36:30,272 - root - INFO - Next message scheduled in 14.727868 seconds (2025-02-27 14:36:45)
+2025-02-27 14:36:35,511 - root - INFO - Next message scheduled in 14.488108 seconds (2025-02-27 14:36:50)
+2025-02-27 14:36:45,246 - root - INFO - Next message scheduled in 14.753406 seconds (2025-02-27 14:37:00)
+2025-02-27 14:38:40,076 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:38:40,079 - discord.client - INFO - logging in using static token
+2025-02-27 14:38:41,204 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 22eba8cbdeab780b025334a9251939ad).
+2025-02-27 14:38:54,135 - root - INFO - Next message scheduled in 0.864495 seconds (2025-02-27 14:38:55)
+2025-02-27 14:38:55,279 - root - INFO - Next message scheduled in 14.720561 seconds (2025-02-27 14:39:10)
+2025-02-27 14:39:10,431 - root - INFO - Next message scheduled in 14.568542 seconds (2025-02-27 14:39:25)
+2025-02-27 14:39:25,307 - root - INFO - Next message scheduled in 14.692237 seconds (2025-02-27 14:39:40)
+2025-02-27 14:39:28,181 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:39:28,187 - discord.client - INFO - logging in using static token
+2025-02-27 14:39:29,635 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 1928f15d862a441430ffd72efd6d8702).
+2025-02-27 14:39:31,692 - discord.client - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "D:\BotPontajeProject\bot.py", line 106, in on_ready
+    if scheduled_task is None or scheduled_task.done():
+       ^^^^^^^^^^^^^^
+NameError: name 'scheduled_task' is not defined
+2025-02-27 14:44:33,583 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:44:33,586 - discord.client - INFO - logging in using static token
+2025-02-27 14:44:34,767 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: a57c30d534f5051bdf92f9bba985f49c).
+2025-02-27 14:44:36,798 - discord.client - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\discord\client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "D:\BotPontajeProject\bot.py", line 107, in on_ready
+    if scheduled_task is None or scheduled_task.done():
+       ^^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'scheduled_task' where it is not associated with a value
+2025-02-27 14:45:48,157 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:45:48,160 - discord.client - INFO - logging in using static token
+2025-02-27 14:45:49,246 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: cc7f1d1acd91cefc35c6a87a9737b368).
+2025-02-27 14:45:51,275 - root - INFO - Next message scheduled in 3.724193 seconds (2025-02-27 14:45:55)
+2025-02-27 14:45:55,248 - root - INFO - Next message scheduled in 14.751884 seconds (2025-02-27 14:46:10)
+2025-02-27 14:46:10,361 - root - INFO - Next message scheduled in 14.638802 seconds (2025-02-27 14:46:25)
+2025-02-27 14:46:15,032 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-02-27 14:46:15,035 - discord.client - INFO - logging in using static token
+2025-02-27 14:46:16,245 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 2abb18778b59de9bfa449132bfd5013c).
+2025-02-27 14:46:18,280 - root - INFO - Next message scheduled in 6.719733 seconds (2025-02-27 14:46:25)
+2025-02-27 14:46:25,246 - root - INFO - Next message scheduled in 14.753701 seconds (2025-02-27 14:46:40)

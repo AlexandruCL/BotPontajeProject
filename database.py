@@ -11,24 +11,26 @@ def init_db():
                  clock_out TEXT)''')
     c.execute('''CREATE TABLE IF NOT EXISTS timestamps (
                  id INTEGER PRIMARY KEY,
-                 last_message TEXT)''')
+                 base_timestamp TEXT)''')
     conn.commit()
     conn.close()
 
-def get_last_message_timestamp():
+def get_base_timestamp():
+    """Retrieve the base timestamp from the database."""
     conn = sqlite3.connect('clock_times.db')
     c = conn.cursor()
-    c.execute('SELECT last_message FROM timestamps WHERE id = 1')
+    c.execute('SELECT base_timestamp FROM timestamps WHERE id = 1')
     result = c.fetchone()
     conn.close()
     if result:
         return datetime.datetime.fromisoformat(result[0])
     return None
 
-def set_last_message_timestamp(timestamp):
+def set_base_timestamp(timestamp):
+    """Save the base timestamp in the database."""
     conn = sqlite3.connect('clock_times.db')
     c = conn.cursor()
-    c.execute('INSERT OR REPLACE INTO timestamps (id, last_message) VALUES (1, ?)', (timestamp.isoformat(),))
+    c.execute('INSERT OR REPLACE INTO timestamps (id, base_timestamp) VALUES (1, ?)', (timestamp.isoformat(),))
     conn.commit()
     conn.close()
 
